@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+<!--    <div >-->
+<!--      <router-link to="/side">Side</router-link> |-->
+<!--    </div>-->
+
     <router-view/>
   </div>
 </template>
@@ -17,8 +17,13 @@
   color: #2c3e50;
 }
 
+#app{
+  margin-top:-8px;
+  margin-left: -8px;
+}
+
 #nav {
-  padding: 30px;
+  padding: 0px;
 }
 
 #nav a {

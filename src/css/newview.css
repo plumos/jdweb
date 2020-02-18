@@ -1,0 +1,21 @@
+.cview{padding-left: 100px;padding-top: 70px;}
+.add{margin-left:70%;background-color: floralwhite;}
+.pagina{ margin-left: 50%;margin-bottom: 10px;}
+
+/*food*/
+.food{padding-left: 100px;padding-top: 70px;}
+.foodinfo{margin-top: 30px;margin-right: 10px}
+.foodform{width: 40%;margin-left: 45px}
+.upimg{margin-left: 200px;}
+.foodbtn{ }
+.fooddialog{width:1800px;margin-right: 200px;}
+/*food control*/
+.fdcontrol{padding-left: 100px;padding-top: 70px;}
+.img-dialog{ }
+
+/*login*/
+.login{
+    width:20%;
+    margin-left:40%;
+    margin-top:10%;
+}

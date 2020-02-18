@@ -1,24 +1,77 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+import tmenu from '../views/tmenu'
+import food from '../views/food'
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path:'/',
+    name:'side',
+    component:()=>import("../components/side/side"),
+    children:[{
+      path:'/food',
+      name:'food',
+      component: food,
+    },
+      {
+        path:'/tmenu',
+        name:'tmenu',
+        component: tmenu,
+      },
+      {
+        path:'/foodcon',
+        name:'foodcon',
+        component:()=>import("../views/foodcontrol"),
+      },
+      {
+        path:'/createuser',
+        name:'createuser',
+        component:()=>import("../views/user/createuser"),
+      }
+    ],
+    meta:{
+      requireAuth:true
+    }
   },
+  // {
+  //   path:'/food',
+  //   name:'food',
+  //   component: food,
+  //   meta:{
+  //     requireAuth:true
+  //   }
+  // },
+  // {
+  //   path:'/tmenu',
+  //   name:'tmenu',
+  //   component: tmenu,
+  //   meta:{
+  //     requireAuth:true
+  //   }
+  // },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+    path:'/foodchan',
+    name:'foodchan',
+    component:()=>import("../views/foodchange"),
+    meta:{
+      requireAuth:true
+    }
+  },
+  // {
+  //   path:'/foodcon',
+  //   name:'foodcon',
+  //   component:()=>import("../views/foodcontrol"),
+  //   meta:{
+  //     requireAuth:true
+  //   }
+  // },
+  {
+    path:'/login',
+    name:'login',
+    component:()=>import("../views/user/login")
+  },
+];
 
 const router = new VueRouter({
   mode: 'history',

@@ -1,0 +1,39 @@
+.logo{width:100%;}
+#top{
+    background-color: white;
+}
+.bartop{
+    display: flex;
+    background-color: white;
+}
+
+.bar{
+    margin-top: 10px;
+}
+
+.top{
+    /*margin-bottom: 20px;*/
+    padding-left: 80%;
+}
+
+.smenu{
+    position:fixed;
+    /*        position: fixed;*/
+    z-index: 11;
+    width:20%;
+    height: 100%;
+    /*background-color: #B2DFEE;*/
+    /*background-image: linear-gradient(to right, #B6CBCE , #7AAEBE);*/
+    background-color: #fcfcfc;
+}
+.sbar{
+    padding-left: 20%;
+    margin-left: 30px;
+    /*margin-top: 40px;*/
+    padding-top: 20px;
+    position: fixed;
+    z-index: 9;
+    height: 20px;
+    width: 85%;
+    /*    background-color: #f1faf8;*/
+}
