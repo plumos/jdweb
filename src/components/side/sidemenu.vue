@@ -19,7 +19,7 @@
                 </el-menu-item>
                 <el-menu-item index="foodcon">
                     <i class="el-icon-refrigerator"></i>
-                    <span>余量</span>
+                    <span>管理</span>
                 </el-menu-item>
             </el-submenu>
             <el-menu-item index="2">

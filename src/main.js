@@ -1,18 +1,23 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import base from './base'
 import axios from 'axios';
 import store from './store/store'
 import * as types from './store/types'
 
 import VueAxios from 'vue-axios'
 
+Vue.use(base)
 Vue.use(VueAxios,axios);
 
 import {Button, Dropdown, Menu,Breadcrumb,Tag,Icon,Submenu,Row,Col,MenuItem,MenuItemGroup,BreadcrumbItem,DropdownMenu,
   DropdownItem,Table,TableColumn,Card,Dialog,Pagination,Input,InputNumber,Form,FormItem,Select,Option,Upload,
   Tabs,TabPane,RadioGroup,RadioButton,Notification,Message} from 'element-ui';
-Vue.prototype.$notify = Notification;
+//Vue.prototype.$notify = Notification;
+const notify = Notification;
+Vue.prototype.$notify = notify;
+
 Vue.prototype.$message = Message;
 Vue.use(RadioButton);
 Vue.use(RadioGroup);
@@ -73,7 +78,7 @@ axios.interceptors.response.use(
           case 401:
             // 返回 401 清除token信息并跳转到登录页面
             store.commit(types.LOGOUT);
-            this.$notify({
+            notify({
               message: '超时退出',
               type: 'error'
             });

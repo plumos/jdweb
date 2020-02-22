@@ -31,10 +31,12 @@
             <el-upload
                     class="upimg"
                     :class="{hide:hideUpload}"
+                    ref="upload"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     list-type="picture-card"
-                    :show-file-list="true"
+                    :file-list="fileList"
                     :auto-upload="false"
+                    :http-request="myUpload"
                     :on-change="handleChange"
                     :on-preview="handlePictureCardPreview"
                     :on-remove="handleRemove">
@@ -42,7 +44,8 @@
             </el-upload>
         </div>
         <div class="foodbtn">
-            <el-button  style="background-color: whitesmoke" @click="fdcommit">提交</el-button>
+            <el-button  style="background-color: whitesmoke" @click="fdcommit" :disabled="commiting">提交</el-button>
+<!--            <el-button  style="background-color: whitesmoke" @click="commit">提交图片</el-button>-->
         </div>
         <el-dialog :visible.sync="showAllCommit" class="fooddialog" title="已提交菜单">
         <el-table
@@ -58,7 +61,7 @@
             <el-table-column prop="unit" label="单位" width="150"></el-table-column>
             <el-table-column label="图片"  height="60">
                 <template slot-scope="scope">
-                    　　　　<img :src="scope.row.imgurl" width="100" height="55" @click="openImg(scope.row.imgurl)"/>
+                    <img :src="scope.row.imgurl" width="100" height="55" @click="openImg(scope.row.imgurl)"/>
                 </template>
             </el-table-column>
         </el-table>
@@ -79,38 +82,78 @@
                 limitCount:1,
                 menus:[],
                 showAllCommit:false,
-
+                file:null,
+                fileList:[],
+                commiting:false,
             }
         },
         methods: {
             fdcommit(){
-               this.axios.post('/dc/addfood', {
-                   account:window.sessionStorage.getItem("account"),
-                   name:this.form.name,
-                   unit:this.form.unit,
-                   unitprice:this.form.unitprice,
-               }).then(response => {
-                   if (response.status === 200){
-                       if (response.data.status === 0){
-                           this.$notify({message: '添加成功', type: 'success'});
-                           this.menus.push({name:this.form.name,unit:this.form.unit,unitprice:this.form.unitprice})
-                           this.form={};
-                       }else{
-                           this.$notify.error({message: response.data.msg});
-                       }
-                   }
-               }).catch(function (error) {
-                   console.log(error);
-               });
+                if(typeof(this.form.name)==="undefined"||this.form.name===""){
+                    this.$notify.error({message:"菜品为空"});
+                    return
+                }
+                if(typeof(this.form.unitprice)==="undefined"||this.form.unitprice===0){
+                    this.$notify.error({message:"单价为空"});
+                    return
+                }
+                if(typeof(this.form.unit)==="undefined"||this.form.unit===""){
+                    this.$notify.error({message:"单位为空"});
+                    return
+                }
+//                console.log(this.form.unit);
+                if(this.file===null){
+                    this.$notify.error({message:"图片为空"});
+                    return;
+                }
+                let file = this.file;
+                let param = new FormData() ; // 创建form对象
+                param.append('file', file.raw);  // 通过append向form对象添加数据
+                param.append('account', window.sessionStorage.getItem("account"))
+                param.append('name', this.form.name);
+                param.append('unit', this.form.unit);
+                param.append('unitprice', this.form.unitprice);
+                let config = {
+                    headers: {'Content-Type': 'multipart/form-data'}
+                };
+                // 添加请求头
+                this.commiting=true;
+
+                this.axios.post('/dc/addfood', param, config)
+                    .then(response => {
+                        if (response.status === 200){
+                            if (response.data.status === 0){
+                                this.$notify({message: '添加成功', type: 'success'});
+
+                                console.log(response.data.imgurl,123);
+                                this.menus.push({name:this.form.name,unit:this.form.unit,unitprice:this.form.unitprice,imgurl:response.data.imgurl});
+                                this.form={};
+                                this.fileList=[];
+                                setTimeout(()=>{this.hideUpload=false;}, 500)
+
+                            }else{
+                                this.$notify.error({message: response.data.msg});
+                            }
+                        }
+                        this.commiting=false;
+                    })
+                .catch(error=>{
+                    this.$notify.error({message:'添加失败'});
+                    this.commiting=false;
+                })
+
+            },
+            myUpload:function(){
             },
             handleChange(file,fileList){
                 this.hideUpload = fileList.length >= this.limitCount;
-                console.log(1,fileList)
+                this.file = file;
+                console.log(1,file)
             },
             handleRemove(file, fileList) {
-                this.hideUpload = fileList.length >= this.limitCount;
-
-                console.log(file, fileList);
+                setTimeout(()=>{this.hideUpload=false;}, 500)
+            //    this.hideUpload = fileList.length >= this.limitCount;
+         //       this.$refs.upload.clearFiles();
             },
             handlePictureCardPreview(file) {
                 this.dialogImageUrl = file.url;

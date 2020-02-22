@@ -22,9 +22,9 @@
                 </template>
             </el-table-column>
             <el-table-column label="操作">
-                <template>
+                <template slot-scope="scope">
                     <el-button type="text">修改</el-button>
-                    <el-button type="text">删除</el-button>
+                    <el-button type="text" @click="delfood(scope.$index,scope.row.id,scope.row.filereal)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -37,7 +37,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
     export default {
         name: "cmenu",
         data(){
@@ -51,6 +50,23 @@
             }
         },
         methods:{
+            delfood(index,id,filereal){
+                this.axios.post('/dc/delfood', {
+                    account:window.sessionStorage.getItem("account"),
+                    id:id,
+                    filereal:filereal,
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            this.menus.splice(index,1)
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
             openImg(imgurl){
                 this.imgVisible = true;
                 this.dialogImgUrl = imgurl;
@@ -76,7 +92,11 @@
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
-                            this.menus = response.data.menu;
+                            if(response.data.menu===null){
+                                this.menus=[];
+                            }else{
+                                this.menus = response.data.menu;
+                            }
                             this.handleSizeChange(10);
                         }else{
                             this.$notify.error({message: response.data.msg});

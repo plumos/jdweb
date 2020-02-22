@@ -16,18 +16,20 @@
                         height="550"
                         style="width: 100%;font-size: 18px">
                     <el-table-column prop="name" label="菜品" width="250"></el-table-column>
-                    <el-table-column prop="state" label="状态" ></el-table-column>
+                    <el-table-column prop="state" label="状态">
+                        <template slot-scope="scope">{{checkstate(scope.row.state)}}</template>
+                    </el-table-column>
                     <el-table-column  label="余量" width="150">
                         <template slot-scope="scope">
-                            <el-input type="number" v-model="scope.row.number" class="tbinput"></el-input>
+                            <el-input-number v-model="scope.row.number" :controls="false" class="tbinput"></el-input-number>
                         </template>
                     </el-table-column>
                     <el-table-column label="菜品管理">
-                        <template>
-                            <el-button type="text">余量</el-button>
-                            <el-button type="text">售罄</el-button>
-                            <el-button type="text">隐藏</el-button>
-                            <el-button type="text">恢复</el-button>
+                        <template slot-scope="scope">
+                            <el-button type="text" :disabled="scope.row.state.hidden||scope.row.state.soldout" @click="stateset(scope.$index,1,scope.row.id,scope.row.number)">限量</el-button>
+                            <el-button type="text" :disabled="scope.row.state.hidden||scope.row.state.soldout" @click="stateset(scope.$index,2,scope.row.id)">售罄</el-button>
+                            <el-button type="text" :disabled="scope.row.state.hidden" @click="stateset(scope.$index,3,scope.row.id)">隐藏</el-button>
+                            <el-button type="text" @click="stateset(scope.$index,4,scope.row.id)">恢复</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -39,49 +41,55 @@
 <!--                </el-pagination>-->
                 <div style="display: flex">
                     <div style="width:70%">
-
-                        <el-radio-group v-model="radio" size="small" style="" >
-                            <el-radio-button label="上海"></el-radio-button>
-                            <el-radio-button label="北京"></el-radio-button>
-                            <el-radio-button label="广州"></el-radio-button>
-                            <el-radio-button label="深圳"></el-radio-button>
-                            <el-radio-button label="其他"></el-radio-button>
+                        <el-radio-group v-model="radio" size="small" style="" @change="rdchange">
+                            <el-radio-button :label="item.word" :key="item.word" v-for="item in keywords"></el-radio-button>
                         </el-radio-group>
-                        <el-row style="margin-top:10px" v-if="showqita">
-                            <el-input size="small" style="width: 30%"></el-input>
-                            <el-button size="small" style="margin-left: 10px">搜索</el-button>
-                        </el-row>
 
                     <el-table
-                        :data="menus.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+                        :data="searchmenus"
                         :cell-style="{padding:0.5}"
                         border
                         :header-cell-class-name="tableHeader"
-
+                        ref="mutipleTable"
                         height="550"
                         style="width: 100%;font-size: 18px;margin-top:10px">
                         <el-table-column type="selection" width="55"></el-table-column>
                         <el-table-column prop="name" label="菜品" ></el-table-column>
-                        <el-table-column prop="state" label="状态" ></el-table-column>
-                        <el-table-column prop="number" label="余量" ></el-table-column>
+                        <el-table-column prop="state" label="状态" >
+                            <template slot-scope="scope">{{checkstate(scope.row.state)}}</template>
+                        </el-table-column>
                     </el-table>
                     </div>
                     <div style="margin-top: 30px;padding-left: 10px">
+                        <el-row style="margin-top: 15px" >
+                            <el-input size="small" style="width: 50%" v-model="sword"></el-input>
+                            <el-button size="small" style="margin-left: 10px;" @click="search" type="text">搜索</el-button>
+                        </el-row>
 
-<!--                            <el-form ref="form" :model="form" label-width="80px">-->
-<!--                                <el-form-item label="余量">-->
-<!--                                    <el-input type="number" v-model="number"  style="width: 50%"></el-input>-->
-<!--                                    <el-button style="margin-left:10%" >设定</el-button>-->
-<!--                                </el-form-item>-->
-<!--                            </el-form>-->
-
-<!--                        <el-card style="margin-left: 10px">-->
-                            <el-button  style="margin-left: 10px;margin-top:20px">售罄</el-button>
-                            <el-button >隐藏</el-button>
-                            <el-button >恢复</el-button>
+                            <el-button @click="mutilstateset(2)" style="margin-left: 10px;margin-top:30px">售罄</el-button>
+                            <el-button @click="mutilstateset(3)" >隐藏</el-button>
+                            <el-button @click="mutilstateset(4)" >恢复</el-button>
 <!--                        </el-card>-->
                     </div>
                 </div>
+            </el-tab-pane>
+            <el-tab-pane label="关键词设置" name="third">
+                <el-row style="margin-top: 10px;width:50%" >
+                    <el-input size="small" style="width: 50%" v-model="newword"></el-input>
+                    <el-button size="small" style="margin-left: 10px;margin-bottom: 10px" @click="addkword" type="text">添加</el-button>
+                </el-row>
+                <el-table
+                    :data="keywords"
+                    :cell-style="{padding:0}"
+                    border
+                    style="width: 70%">
+                    <el-table-column label="关键词" prop="word"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="delkword(scope.$index,scope.row.id)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </el-tab-pane>
         </el-tabs>
         <el-dialog width="400px" :visible.sync="imgVisible" class="img-dialog">
@@ -97,22 +105,50 @@
         name: "cfoodcontrol",
         data(){
             return{
-                menus:[{name:"鱼香肉丝",unitprice:"15.0",state:"停用",number:0,unit:"份",
-                    imgurl:"https://www.baidu.com/img/pcpad_3d7575f432a74060c1a5a0bfb71c8a2e.png"},
-                ],
+                menus:[],
+                searchmenus:[],
                 imgVisible:false,
                 dialogImgUrl:null,
                 currentPage:0,
                 total: 0,
                 pagesize:10,
                 activeName:'first',
-                radio:"深圳",
+                radio:"",
                 number:0,
                 form:{},
                 showqita:false,
+                keywords:[],
+                sword:'',
+                keyword:'',
+                states:[],
+                newword:'',
             }
         },
         methods:{
+            keyset(){
+
+            },
+            rdchange(item){
+                var tmpmenu = [];
+                for(var i=0;i<this.menus.length;i++){
+                    if(this.menus[i].name.indexOf(item)!==-1){
+                        var tmenu = this.menus[i];
+                        tmenu.index=i;
+                        tmpmenu.push(tmenu);
+                    }
+                }
+                this.searchmenus=tmpmenu;
+                this.keyword=item;
+
+                this.$nextTick(() => {
+                    for (let i = 0; i < this.searchmenus.length; i++) {
+                        this.$refs.mutipleTable.toggleRowSelection(this.searchmenus[i])
+                    }
+                })
+            },
+            search(){
+              this.rdchange(this.sword);
+            },
             openImg(imgurl){
                 this.imgVisible = true;
                 this.dialogImgUrl = imgurl;
@@ -132,9 +168,187 @@
                 this.pagesize = currentsize;
                 console.log(2)
             },
+            delkword(index,id){
+                this.axios.post('/dc/delkword', {
+                    account:window.sessionStorage.getItem("account"),
+                    id:id,
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            this.$notify({message:"删除成功",type:"success"})
+                            this.keywords.splice(index,1)
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            addkword(){
+                if (this.newword===''){
+                    this.$notify.error({message:"关键词为空"});
+                    return
+                }
+                for(var item of this.keywords){
+                    if (item.word===this.newword){
+                        this.$notify.error({message:this.newword+"已存在"});
+                        return;
+                    }
+                }
+                this.axios.post('/dc/addkword', {
+                    account:window.sessionStorage.getItem("account"),
+                    word:this.newword,
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            this.$notify({message:"添加成功",type:"success"})
+                            // this.getkeyword()
+                            this.keywords.push(response.data.keyword);
+                            console.log(this.keywords)
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            getmenu:function(){
+                this.axios.post('/dc/getmenu', {
+                    account:window.sessionStorage.getItem("account"),
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            if(response.data.menu===null){
+                                this.menus=[];
+                            }else{
+                                this.menus = response.data.menu;
+                                this.rdchange(this.radio);
+                            }
+                            this.handleSizeChange(10);
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            getkeyword:function(){
+                this.axios.post('/dc/getkword', {
+                    account:window.sessionStorage.getItem("account"),
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            if(response.data.keywords===null){
+                                this.keywords=[];
+                            }else{
+                                this.keywords = response.data.keywords;
+                                this.radio=this.keywords[0].word;
+                            }
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            stateset:function(index,tag,id,no) {
+                console.log(tag,no);
+                if(tag===1&& typeof(no) === "undefined"){
+                    this.$notify.error({message:"余量为空"})
+                    return
+                }
+                this.axios.post('/dc/setstate',{
+                    account:window.sessionStorage.getItem("account"),
+                    tag:tag,
+                    id:id,
+                    no:no,
+                }).then(response=>{
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            this.$notify({message:"设置成功",type:"success"});
+                            var menus=this.menus;
+                            switch (tag) {
+                                case 1:
+                                    menus[index].state.remain=no;
+                                    delete(menus[index].number);
+                                    break;
+                                case 2:
+                                    menus[index].state.remain=0;
+                                    menus[index].state.soldout=true;
+                                    break;
+                                case 3:
+                                    menus[index].state.remain=0;
+                                    menus[index].state.hidden=true;
+                                    break;
+                                case 4:
+                                    menus[index].state.remain=0;
+                                    menus[index].state.hidden=false;
+                                    menus[index].state.soldout=false;
+                                    break
+                            }
+                            this.menus=menus;
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                })
+            },
+            mutilstateset:function(tag){
+                const _selectData = this.$refs.mutipleTable.selection;
+                console.log("sel:",_selectData);
+                var ids = [];
+                var indexs=[];
+                for(var i=0;i<_selectData.length;i++){
+                    var id=_selectData[i].id;
+                    ids.push(id);
+                    indexs.push(_selectData[i].index);
+                }
+                this.axios.post('/dc/changemutilstate',{
+                    account:window.sessionStorage.getItem("account"),
+                    tag:tag,
+                    ids:ids,
+                }).then(response=> {
+                    if (response.status === 200) {
+                        if (response.data.status === 0) {
+                            this.$notify({message: "设置成功", type: "success"});
+                            var menus=this.menus;
+                            for(var index of indexs){
+                                switch (tag) {
+                                    case 1:
+                                        menus[index].state.remain=no;
+                                        delete(menus[index].number);
+                                        break;
+                                    case 2:
+                                        menus[index].state.remain=0;
+                                        menus[index].state.soldout=true;
+                                        break;
+                                    case 3:
+                                        menus[index].state.remain=0;
+                                        menus[index].state.hidden=true;
+                                        break;
+                                    case 4:
+                                        menus[index].state.remain=0;
+                                        menus[index].state.hidden=false;
+                                        menus[index].state.soldout=false;
+                                        break
+                                }
+                            }
+                            this.menus=menus;
+                            this.rdchange(this.keyword);
+                        }
+                    }
+                })
+            }
         },
         mounted(){
-            this.handleSizeChange(10)
+            this.getmenu();
+            this.getkeyword();
+            this.handleSizeChange(10);
         }
     }
 </script>

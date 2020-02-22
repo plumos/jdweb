@@ -34,6 +34,12 @@ const routes = [
       requireAuth:true
     }
   },
+  {
+    path:'/test',
+    name:'test',
+    component:()=>import("../views/test"),
+  },
+
   // {
   //   path:'/food',
   //   name:'food',
