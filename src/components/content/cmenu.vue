@@ -15,7 +15,7 @@
             style="margin-left:20%;width: 75%;font-size: 18px">
             <el-table-column prop="name" label="菜品" width="250"></el-table-column>
             <el-table-column prop="unitprice" label="单价(元)" width="150"></el-table-column>
-            <el-table-column prop="unit" label="单位" width="150"></el-table-column>
+            <el-table-column prop="sort" label="分类" width="150"></el-table-column>
             <el-table-column label="图片"  height="60">
                 <template slot-scope="scope">
                     　　　　<img :src="scope.row.imgurl" width="100" height="55" @click="openImg(scope.row.imgurl)"/>
@@ -23,7 +23,7 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text">修改</el-button>
+                    <el-button type="text" @click="gotofoodchan(scope.row)">修改</el-button>
                     <el-button type="text" @click="delfood(scope.$index,scope.row.id,scope.row.filereal)">删除</el-button>
                 </template>
             </el-table-column>
@@ -37,8 +37,10 @@
 </template>
 
 <script>
+    import store from "@/store/store"
     export default {
         name: "cmenu",
+        components:[store],
         data(){
             return{
                 menus:[],
@@ -50,6 +52,15 @@
             }
         },
         methods:{
+            gotofoodchan(food){
+                this.$router.push({
+                    path: '/foodchan',
+                    name: 'foodchan',
+                    params: {
+                        food: food
+                    }
+                })
+            },
             delfood(index,id,filereal){
                 this.axios.post('/dc/delfood', {
                     account:window.sessionStorage.getItem("account"),
@@ -79,12 +90,10 @@
             },
             current_change: function (currentPage) {
                 this.currentPage = currentPage;
-                console.log(1)
             },
             handleSizeChange:function(currentsize){
                 this.total = this.menus.length;
                 this.pagesize = currentsize;
-                console.log(2)
             },
             getmenu:function(){
                 this.axios.post('/dc/getmenu', {
@@ -92,10 +101,14 @@
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
-                            if(response.data.menu===null){
+                            if(response.data.data===null){
                                 this.menus=[];
                             }else{
-                                this.menus = response.data.menu;
+                                for(var item of response.data.data){
+                                    item.imgurl = store.state.baseurl+item.imgurl
+                                    this.menus.push(item)
+                                }
+                                //this.menus = response.data.data;
                             }
                             this.handleSizeChange(10);
                         }else{

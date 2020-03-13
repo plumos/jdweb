@@ -64,7 +64,9 @@
                     });
             },
             afterlogin(){
-            }
+                this.getsort();
+                this.getfdname();
+            },
         }
     }
 </script>

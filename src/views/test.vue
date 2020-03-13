@@ -1,17 +1,6 @@
 <template>
     <div>
-        <input name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/>
-
-        <el-upload
-                action="https://jsonplaceholder.typicode.com/postsss/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove">
-            <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
+        <v-chart ref="chart1" :options="option" :auto-resize="true"/>
     </div>
 </template>
 
@@ -22,16 +11,29 @@
             return {
                 dialogImageUrl: '',
                 dialogVisible: false,
-            };
+                option:{
+                    title: {
+                        text: 'ECharts 入门示例'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['销量']
+                    },
+                    xAxis: {
+                        data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销量',
+                        type: 'line',
+                        data: [5, 20, 36, 10, 10, 20]
+                    }]
+                }
+            }
         },
         methods: {
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
-            }
+        },
+        mounted(){
         }
     }
 </script>

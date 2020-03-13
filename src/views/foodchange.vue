@@ -1,6 +1,5 @@
 <template>
     <div>
-<!--        <Side/>-->
         <cfoodchange class="food"/>
     </div>
 </template>

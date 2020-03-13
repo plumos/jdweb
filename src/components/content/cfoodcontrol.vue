@@ -91,6 +91,24 @@
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
+            <el-tab-pane label="分类设置" name="forth">
+                <el-row style="margin-top: 10px;width:50%" >
+                    <el-input size="small" style="width: 50%" v-model="sort"></el-input>
+                    <el-button size="small" style="margin-left: 10px;margin-bottom: 10px" @click="addsort" type="text">添加</el-button>
+                </el-row>
+                <el-table
+                        :data="sorts"
+                        :cell-style="{padding:0}"
+                        border
+                        style="width: 70%">
+                    <el-table-column label="分类" prop="sort"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="delsort(scope.$index,scope.row.id)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
         </el-tabs>
         <el-dialog width="400px" :visible.sync="imgVisible" class="img-dialog">
             <el-card :body-style="{ padding: '0px' }">
@@ -122,6 +140,8 @@
                 keyword:'',
                 states:[],
                 newword:'',
+                sorts:[],
+                sort:'',
             }
         },
         methods:{
@@ -166,7 +186,6 @@
             handleSizeChange:function(currentsize){
                 this.total = this.menus.length;
                 this.pagesize = currentsize;
-                console.log(2)
             },
             delkword(index,id){
                 this.axios.post('/dc/delkword', {
@@ -177,6 +196,24 @@
                         if (response.data.status === 0){
                             this.$notify({message:"删除成功",type:"success"})
                             this.keywords.splice(index,1)
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            delsort(index,id){
+                this.axios.post('/dc/delsort', {
+                    account:window.sessionStorage.getItem("account"),
+                    id:id,
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            this.$notify({message:"删除成功",type:"success"});
+                            this.sorts.splice(index,1);
+                            window.sessionStorage.setItem("sorts",JSON.stringify(response.data.sorts))
                         }else{
                             this.$notify.error({message: response.data.msg});
                         }
@@ -214,16 +251,44 @@
                     console.log(error);
                 });
             },
+            addsort(){
+                if (this.sort===''){
+                    this.$notify.error({message:"分类为空"});
+                    return
+                }
+                for(var item of this.sorts){
+                    if (item.sort===this.sort){
+                        this.$notify.error({message:this.sort+"已存在"});
+                        return;
+                    }
+                }
+                this.axios.post('/dc/addsort', {
+                    account:window.sessionStorage.getItem("account"),
+                    sort:this.sort,
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            this.$notify({message:"添加成功",type:"success"});
+                            this.sorts.push(response.data.sort);
+                            window.sessionStorage.setItem("sorts",JSON.stringify(this.sorts))
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
             getmenu:function(){
                 this.axios.post('/dc/getmenu', {
                     account:window.sessionStorage.getItem("account"),
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
-                            if(response.data.menu===null){
+                            if(response.data.data===null){
                                 this.menus=[];
                             }else{
-                                this.menus = response.data.menu;
+                                this.menus = response.data.data;
                                 this.rdchange(this.radio);
                             }
                             this.handleSizeChange(10);
@@ -255,9 +320,27 @@
                     console.log(error);
                 });
             },
+            fdgetsort:function(){
+                this.axios.post('/dc/getsort', {
+                    account:window.sessionStorage.getItem("account"),
+                }).then(response => {
+                    if (response.status === 200){
+                        if (response.data.status === 0){
+                            if(response.data.sorts===null){
+                                this.sorts=[];
+                            }else{
+                                this.sorts = response.data.sorts;
+                            }
+                        }else{
+                            this.$notify.error({message: response.data.msg});
+                        }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
 
             stateset:function(index,tag,id,no) {
-                console.log(tag,no);
                 if(tag===1&& typeof(no) === "undefined"){
                     this.$notify.error({message:"余量为空"})
                     return
@@ -348,6 +431,12 @@
         mounted(){
             this.getmenu();
             this.getkeyword();
+
+            var sorts = JSON.parse(window.sessionStorage.getItem("sorts"));
+            if(sorts ===null){
+                this.sorts = [];
+            }
+
             this.handleSizeChange(10);
         }
     }

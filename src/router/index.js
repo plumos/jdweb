@@ -28,7 +28,23 @@ const routes = [
         path:'/createuser',
         name:'createuser',
         component:()=>import("../views/user/createuser"),
-      }
+      },{
+        path:'/order',
+        name:'order',
+        component:()=>import("../views/order")
+      },{
+        path:'/census',
+        name:'census',
+        component:()=>import("../views/census")
+      },
+      {
+        path:'/foodchan',
+        name:'foodchan',
+        component:()=>import("../views/foodchange"),
+        meta:{
+          requireAuth:true
+        }
+      },
     ],
     meta:{
       requireAuth:true
@@ -40,38 +56,6 @@ const routes = [
     component:()=>import("../views/test"),
   },
 
-  // {
-  //   path:'/food',
-  //   name:'food',
-  //   component: food,
-  //   meta:{
-  //     requireAuth:true
-  //   }
-  // },
-  // {
-  //   path:'/tmenu',
-  //   name:'tmenu',
-  //   component: tmenu,
-  //   meta:{
-  //     requireAuth:true
-  //   }
-  // },
-  {
-    path:'/foodchan',
-    name:'foodchan',
-    component:()=>import("../views/foodchange"),
-    meta:{
-      requireAuth:true
-    }
-  },
-  // {
-  //   path:'/foodcon',
-  //   name:'foodcon',
-  //   component:()=>import("../views/foodcontrol"),
-  //   meta:{
-  //     requireAuth:true
-  //   }
-  // },
   {
     path:'/login',
     name:'login',

@@ -12,9 +12,33 @@ exports.install = function (Vue, options) {
         return "正常"
     };
 
+    Vue.prototype.getsort=function(){
+        this.axios.post('/dc/getsort', {
+            account:window.sessionStorage.getItem("account"),
+        }).then(response => {
+            if (response.status === 200){
+                if (response.data.status === 0){
+                    window.sessionStorage.setItem("sorts",JSON.stringify(response.data.sorts))
+                }
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    };
 
-
-
+    Vue.prototype.getfdname=function(){
+        this.axios.post('/dc/getfdname', {
+            account:window.sessionStorage.getItem("account"),
+        }).then(response => {
+            if (response.status === 200){
+                if (response.data.status === 0){
+                    window.sessionStorage.setItem("fdnames",JSON.stringify(response.data.fdnames))
+                }
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    };
 
     Vue.prototype.adds=function(a, b) {
         var c, d, e;

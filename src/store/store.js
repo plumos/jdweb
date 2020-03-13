@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
+    baseurl:"http://127.0.0.1:8080/image/",
     token: null,
     title: '',
     auditors:[],

@@ -3,17 +3,19 @@
         <el-dialog :visible.sync="dialogVisible">
             <img width="80%" :src="dialogImageUrl" alt="">
         </el-dialog>
-
-        <div style="display: flex; margin-left: 120px;margin-top: 20px;">
-            <el-form  :model="formInline" class="foodform" label-width="80px" label-position="left">
+        <span >
+            <el-button type="text" style="color:black" >{{orginfos}}</el-button>
+        </span>
+        <div  style="display: flex; margin-left: 20%;margin-top: 20px;">
+            <el-form  :model="form" class="foodform" label-width="80px" label-position="left">
                 <el-form-item label="菜品" >
-                    <el-input v-model="formInline.name" ></el-input>
+                    <el-input v-model="form.name" ></el-input>
                 </el-form-item>
-                <el-form-item label="单价(元)"  >
-                    <el-input v-model="formInline.unitprice" type="number" style="width:100%"></el-input>
+                <el-form-item label="单价(元)">
+                    <el-input-number v-model="form.unitprice"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
                 </el-form-item>
                 <el-form-item label="单位">
-                    <el-select v-model="formInline.unit" placeholder="请选择" style="width:100%" >
+                    <el-select v-model="form.unit" placeholder="请选择" style="width:100%" >
                         <el-option
                                 v-for="item in units"
                                 :key="item.unit"
@@ -23,13 +25,16 @@
                     </el-select>
                 </el-form-item>
             </el-form>
+
             <el-upload
                     class="upimg"
                     :class="{hide:hideUpload}"
+                    ref="upload"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     list-type="picture-card"
-                    :show-file-list="true"
+                    :file-list="fileList"
                     :auto-upload="false"
+                    :http-request="myUpload"
                     :on-change="handleChange"
                     :on-preview="handlePictureCardPreview"
                     :on-remove="handleRemove">
@@ -37,8 +42,8 @@
             </el-upload>
         </div>
         <div class="foodbtn">
-            <el-button  style="background-color: whitesmoke" @click="onSubmit">返回</el-button>
-            <el-button  style="background-color: whitesmoke" @click="onSubmit">提交</el-button>
+            <el-button  style="background-color: whitesmoke" @click="fdback" >返回</el-button>
+            <el-button  style="background-color: whitesmoke" @click="fdcommit" :disabled="commiting">提交</el-button>
         </div>
     </div>
 </template>
@@ -48,25 +53,97 @@
         name: "cfoodchange",
         data(){
             return{
-                formInline:{},
-                units:[{unit:"串"},{unit:"份"},{unit:"个"}],
+                orginfos:'',
+                food:{},
+                form:{},
+                units:[],
                 dialogVisible:false,
                 dialogImageUrl:'',
                 hideUpload:false,
                 limitCount:1,
-                menus:[{name:"白菜炒萝卜",unitprice:12.3,unit:"串"}],
+                menus:[],
                 showAllCommit:false,
+                file:null,
+                fileList:[],
+                commiting:false,
+                changeflag:false
             }
         },
-        methods:{
+        methods: {
+            fdback(){
+                this.$router.push({
+                    path: '/tmenu',
+                    name: 'tmenu',
+                })
+            },
+            fdcommit(){
+                if(typeof(this.form.name)==="undefined"||this.form.name===""){
+                    this.$notify.error({message:"菜品为空"});
+                    return
+                }
+                if(typeof(this.form.unitprice)==="undefined"||this.form.unitprice===0){
+                    this.$notify.error({message:"单价为空"});
+                    return
+                }
+                if(typeof(this.form.unit)==="undefined"||this.form.unit===""){
+                    this.$notify.error({message:"单位为空"});
+                    return
+                }
+//                console.log(this.form.unit);
+                if(this.file===null){
+                    this.$notify.error({message:"图片为空"});
+                    return;
+                }
+                let file = this.file;
+                let param = new FormData() ; // 创建form对象
+                param.append('file', file.raw);  // 通过append向form对象添加数据
+                param.append('account', window.sessionStorage.getItem("account"))
+                param.append('name', this.form.name);
+                param.append('unit', this.form.unit);
+                param.append('unitprice', this.form.unitprice);
+                param.append("flag",this.changeflag);
+                param.append("filereal",this.form.filereal);
+                param.append("id",this.form.id);
+                let config = {
+                    headers: {'Content-Type': 'multipart/form-data'}
+                };
+                // 添加请求头
+                this.commiting=true;
+
+                this.axios.post('/dc/changefood', param, config)
+                    .then(response => {
+                        if (response.status === 200){
+                            if (response.data.status === 0){
+                                this.$notify({message: '修改成功', type: 'success'});
+                                this.getfdname(); //刷新fdname
+                                this.$router.push({
+                                    path: '/tmenu',
+                                    name: 'tmenu',
+                                })
+                            }else{
+                                this.$notify.error({message: response.data.msg});
+                            }
+                        }
+                        this.commiting=false;
+                    })
+                    .catch(error=>{
+                        this.$notify.error({message:'添加失败'});
+                        this.commiting=false;
+                    })
+
+            },
+            myUpload:function(){
+            },
             handleChange(file,fileList){
                 this.hideUpload = fileList.length >= this.limitCount;
-                console.log(1,fileList)
+                this.file = file;
+                console.log(1,file)
             },
             handleRemove(file, fileList) {
-                this.hideUpload = fileList.length >= this.limitCount;
-
-                console.log(file, fileList);
+                setTimeout(()=>{this.hideUpload=false;}, 500);
+                this.changeflag=true;
+                //    this.hideUpload = fileList.length >= this.limitCount;
+                //       this.$refs.upload.clearFiles();
             },
             handlePictureCardPreview(file) {
                 this.dialogImageUrl = file.url;
@@ -75,14 +152,56 @@
             onSubmit:function(){
 
             },
+            tableHeader({row,rowIndex}){
+                return "table-head-th";
+            },
+            tablecell({row,rowIndex}){
+                return "table-cell-th";
+            },
+            showCommit(){
+                this.showAllCommit = true;
+            },
+        },
+        mounted:function () {
+            console.log(this.$route.params.food);
+            if (this.$route.params.food) {
+                this.form = this.$route.params.food;
+
+                this.orginfos = "原信息:"+this.form.name + "  " + this.form.unitprice + "元/" + this.form.unit;
+
+                this.fileList.push({url:this.form.imgurl});
+                if(this.form.imgurl!==null){
+                    this.hideUpload=true;
+                }
+                this.units=window.sessionStorage.getItem("units");
+            }else{
+                this.$router.push({
+                    path: '/tmenu',
+                    name: 'tmenu',
+                })
+            }
         }
     }
 </script>
-<style>
+
+<style lang="scss">
     .hide .el-upload--picture-card {
         display: none;
     }
+    .el-table .table-head-th{
+        /*background-color: floralwhite;*/
+        padding: 0;
+
+    }
+    .el-table .table-cell-th{
+        /*background-color: whitesmoke;*/
+        padding: 0;
+    }
+    .el-input-number .el-input__inner{
+        text-align: left;
+    }
 </style>
+
 <style scoped>
     @import "../../css/newview.css";
 </style>

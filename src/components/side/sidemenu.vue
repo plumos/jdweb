@@ -22,11 +22,11 @@
                     <span>管理</span>
                 </el-menu-item>
             </el-submenu>
-            <el-menu-item index="2">
+            <el-menu-item index="order">
                 <i class="el-icon-s-order"></i>
                 <span slot="title">订单</span>
             </el-menu-item>
-            <el-menu-item index="3">
+            <el-menu-item index="census">
                 <i class="el-icon-coin"></i>
                 <span slot="title">统计</span>
             </el-menu-item>

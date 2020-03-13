@@ -16,13 +16,13 @@
                     <el-form-item label="单价(元)"  >
                         <el-input-number v-model="form.unitprice"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="单位">
-                        <el-select v-model="form.unit" placeholder="请选择" style="width:100%" >
+                    <el-form-item label="分类">
+                        <el-select v-model="form.sort" placeholder="请选择" style="width:100%" >
                             <el-option
-                                    v-for="item in units"
-                                    :key="item.unit"
-                                    :label="item.unit"
-                                    :value="item.unit">
+                                    v-for="item in sorts"
+                                    :key="item.sort"
+                                    :label="item.sort"
+                                    :value="item.sort">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -58,7 +58,7 @@
                 style="margin-left:5%;width:85%;font-size: 18px;margin-top: 0px">
             <el-table-column prop="name" label="菜品" width="250"></el-table-column>
             <el-table-column prop="unitprice" label="单价(元)" width="150"></el-table-column>
-            <el-table-column prop="unit" label="单位" width="150"></el-table-column>
+            <el-table-column prop="sort" label="分类" width="150"></el-table-column>
             <el-table-column label="图片"  height="60">
                 <template slot-scope="scope">
                     <img :src="scope.row.imgurl" width="100" height="55" @click="openImg(scope.row.imgurl)"/>
@@ -75,7 +75,7 @@
         data(){
             return{
                 form:{},
-                units:[{unit:"串"},{unit:"份"},{unit:"个"}],
+                sorts:[],
                 dialogVisible:false,
                 dialogImageUrl:'',
                 hideUpload:false,
@@ -97,11 +97,6 @@
                     this.$notify.error({message:"单价为空"});
                     return
                 }
-                if(typeof(this.form.unit)==="undefined"||this.form.unit===""){
-                    this.$notify.error({message:"单位为空"});
-                    return
-                }
-//                console.log(this.form.unit);
                 if(this.file===null){
                     this.$notify.error({message:"图片为空"});
                     return;
@@ -111,7 +106,7 @@
                 param.append('file', file.raw);  // 通过append向form对象添加数据
                 param.append('account', window.sessionStorage.getItem("account"))
                 param.append('name', this.form.name);
-                param.append('unit', this.form.unit);
+                param.append('sort', this.form.sort);
                 param.append('unitprice', this.form.unitprice);
                 let config = {
                     headers: {'Content-Type': 'multipart/form-data'}
@@ -125,11 +120,12 @@
                             if (response.data.status === 0){
                                 this.$notify({message: '添加成功', type: 'success'});
 
-                                console.log(response.data.imgurl,123);
-                                this.menus.push({name:this.form.name,unit:this.form.unit,unitprice:this.form.unitprice,imgurl:response.data.imgurl});
+                                this.menus.push({name:this.form.name,sort:this.form.sort,unitprice:this.form.unitprice,imgurl:response.data.imgurl});
                                 this.form={};
                                 this.fileList=[];
-                                setTimeout(()=>{this.hideUpload=false;}, 500)
+                                setTimeout(()=>{this.hideUpload=false;}, 500);
+
+                                this.getfdname() //刷新fdname
 
                             }else{
                                 this.$notify.error({message: response.data.msg});
@@ -141,19 +137,15 @@
                     this.$notify.error({message:'添加失败'});
                     this.commiting=false;
                 })
-
             },
             myUpload:function(){
             },
             handleChange(file,fileList){
                 this.hideUpload = fileList.length >= this.limitCount;
                 this.file = file;
-                console.log(1,file)
             },
             handleRemove(file, fileList) {
                 setTimeout(()=>{this.hideUpload=false;}, 500)
-            //    this.hideUpload = fileList.length >= this.limitCount;
-         //       this.$refs.upload.clearFiles();
             },
             handlePictureCardPreview(file) {
                 this.dialogImageUrl = file.url;
@@ -172,6 +164,9 @@
                 this.showAllCommit = true;
             },
         },
+        mounted:function () {
+            this.sorts=JSON.parse(window.sessionStorage.getItem("sorts"));
+        }
     }
 </script>
 
