@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="smenu">
-            <img class="logo" src="../../assets/logo.jpeg"/>
+            <img class="logo" src="../../assets/333.jpg"/>
             <sidemenu/>
         </div>
         <div>
@@ -16,12 +16,11 @@
 </template>
 
 <script>
-    import sidetop from "@/components/side/sidetop";
     import sidebar from "@/components/side/sidebar";
     import sidemenu from "@/components/side/sidemenu";
     export default {
         name: "side",
-        components: {sidetop, sidebar, sidemenu}
+        components: { sidebar, sidemenu}
     }
 </script>
 

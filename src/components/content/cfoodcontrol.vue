@@ -432,10 +432,8 @@
             this.getmenu();
             this.getkeyword();
 
-            var sorts = JSON.parse(window.sessionStorage.getItem("sorts"));
-            if(sorts ===null){
-                this.sorts = [];
-            }
+            this.sorts = JSON.parse(window.sessionStorage.getItem("sorts"));
+
 
             this.handleSizeChange(10);
         }

@@ -4,7 +4,6 @@
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{list[index].a}}</el-breadcrumb-item>
-  <!--      <el-breadcrumb-item>{{list[index].b}}</el-breadcrumb-item>-->
       </el-breadcrumb>
     </div>
     <div class="top">
@@ -15,7 +14,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="infoset">个人设置</el-dropdown-item>
           <el-dropdown-item @click.native="pwdchange">修改密码</el-dropdown-item>
-          <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
+          <el-dropdown-item @click.native="logout">退出le</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -23,6 +22,8 @@
 </template>
 
 <script>
+  import * as types from '@/store/types'
+  import store from '@/store/store'
   export default {
     name: "sidebar",
     props: ['index'],
@@ -31,8 +32,29 @@
         list: [
           //0-10
           {a: '菜单'}
-
         ]
+      }
+    },
+    methods:{
+      infoset(){
+        this.$router.push({
+          path: '/personal',
+          name: 'personal',
+        })
+      },
+      pwdchange(){
+        this.$router.push({
+          path: '/pwd',
+          name: 'pwd',
+        })
+      },
+      logout(){
+        //window.sessionStorage.clear()
+        store.commit(types.LOGOUT);
+        this.$router.push({
+          path: '/login',
+          name: 'login',
+        })
       }
     }
   }

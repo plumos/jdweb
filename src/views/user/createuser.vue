@@ -19,6 +19,7 @@
 </template>
 
 <script>
+    import md5 from 'md5';
     export default {
         name: "createuser",
         data(){
@@ -37,11 +38,12 @@
                     this.$notify.error({message: "两次输入密码不一致"});
                     return
                 }
+                var pwd = md5(this.form.pwd);
                 this.axios.post('/dc/register', {
                     myaccount:window.sessionStorage.getItem("account"),
                     account:this.form.account,
                     name:this.form.name,
-                    pwd:this.form.pwd,
+                    pwd:pwd,
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){

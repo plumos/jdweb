@@ -18,6 +18,7 @@
 
 <script>
     import axios from 'axios';
+    import md5 from 'md5';
     export default {
         name: "login",
         data(){
@@ -36,9 +37,11 @@
                     this.message ="请输入账号或密码";
                     return
                 }
+                var pwd = md5(this.form.pwd);
+                console.log(md5)
                 axios.post('/login', {
                     account: this.form.account,
-                    pwd: this.form.pwd
+                    pwd: pwd
                 })
                     .then(response => {
                         if (response.status === 200){

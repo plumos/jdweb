@@ -18,7 +18,7 @@ exports.install = function (Vue, options) {
         }).then(response => {
             if (response.status === 200){
                 if (response.data.status === 0){
-                    window.sessionStorage.setItem("sorts",JSON.stringify(response.data.sorts))
+                    window.sessionStorage.setItem("sorts",JSON.stringify(response.data.data))
                 }
             }
         }).catch(function (error) {

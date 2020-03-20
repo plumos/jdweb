@@ -41,6 +41,7 @@
                     :on-preview="handlePictureCardPreview"
                     :on-remove="handleRemove">
                 <i class="el-icon-plus"></i>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过100kb</div>
             </el-upload>
         </div>
         <div class="foodbtn">
@@ -100,6 +101,10 @@
                 if(this.file===null){
                     this.$notify.error({message:"图片为空"});
                     return;
+                }
+                if(this.file.size/1024>100){
+                    this.$notify.error({message:'上传文件不能大于100KB'});
+                    return
                 }
                 let file = this.file;
                 let param = new FormData() ; // 创建form对象

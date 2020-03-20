@@ -14,13 +14,13 @@
                 <el-form-item label="单价(元)">
                     <el-input-number v-model="form.unitprice"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
                 </el-form-item>
-                <el-form-item label="单位">
-                    <el-select v-model="form.unit" placeholder="请选择" style="width:100%" >
+                <el-form-item label="分类">
+                    <el-select v-model="form.sort" placeholder="请选择" style="width:100%" >
                         <el-option
-                                v-for="item in units"
-                                :key="item.unit"
-                                :label="item.unit"
-                                :value="item.unit">
+                                v-for="item in sorts"
+                                :key="item.sort"
+                                :label="item.sort"
+                                :value="item.sort">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -39,6 +39,7 @@
                     :on-preview="handlePictureCardPreview"
                     :on-remove="handleRemove">
                 <i class="el-icon-plus"></i>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过100kb</div>
             </el-upload>
         </div>
         <div class="foodbtn">
@@ -56,7 +57,7 @@
                 orginfos:'',
                 food:{},
                 form:{},
-                units:[],
+                sorts:[],
                 dialogVisible:false,
                 dialogImageUrl:'',
                 hideUpload:false,
@@ -85,21 +86,27 @@
                     this.$notify.error({message:"单价为空"});
                     return
                 }
-                if(typeof(this.form.unit)==="undefined"||this.form.unit===""){
+                if(typeof(this.form.sort)==="undefined"||this.form.sort===""){
                     this.$notify.error({message:"单位为空"});
                     return
                 }
-//                console.log(this.form.unit);
-                if(this.file===null){
+//                console.log(this.form.sort);
+                if(this.file===null &&this.changeflag===true){
                     this.$notify.error({message:"图片为空"});
                     return;
                 }
                 let file = this.file;
                 let param = new FormData() ; // 创建form对象
-                param.append('file', file.raw);  // 通过append向form对象添加数据
+                if(this.changeflag===true) {
+                    if(this.file.size/1024>100){
+                        this.$notify.error({message:'上传文件不能大于100KB'});
+                        return
+                    }
+                    param.append('file', file.raw);  // 通过append向form对象添加数据
+                }
                 param.append('account', window.sessionStorage.getItem("account"))
                 param.append('name', this.form.name);
-                param.append('unit', this.form.unit);
+                param.append('sort', this.form.sort);
                 param.append('unitprice', this.form.unitprice);
                 param.append("flag",this.changeflag);
                 param.append("filereal",this.form.filereal);
@@ -163,17 +170,18 @@
             },
         },
         mounted:function () {
-            console.log(this.$route.params.food);
+
+
             if (this.$route.params.food) {
                 this.form = this.$route.params.food;
 
-                this.orginfos = "原信息:"+this.form.name + "  " + this.form.unitprice + "元/" + this.form.unit;
+                this.orginfos = "原信息:"+this.form.name + "  " + this.form.unitprice + "元 " + this.form.sort;
 
                 this.fileList.push({url:this.form.imgurl});
                 if(this.form.imgurl!==null){
                     this.hideUpload=true;
                 }
-                this.units=window.sessionStorage.getItem("units");
+                this.sorts=JSON.parse(window.sessionStorage.getItem("sorts"));
             }else{
                 this.$router.push({
                     path: '/tmenu',
