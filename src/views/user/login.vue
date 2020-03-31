@@ -49,20 +49,13 @@
                             if (response.data.status === 0){
 
                                 if(response.data.data.shop!==undefined &&response.data.data.shop!==null) {
-                                    if (response.data.data.shop.confirm === 0) {
+
+                                    if (response.data.data.shop.confirm !== 1) {
                                         this.$router.push({
                                             path: '/wait',
+                                            name: 'wait',
                                             params: {
-                                                msgshow: 0,
-                                            }
-                                        });
-                                        return
-                                    }
-                                    if (response.data.data.shop.confirm === 2) {
-                                        this.$router.push({
-                                            path: '/wait',
-                                            params: {
-                                                msgshow: 1,
+                                                msgshow: response.data.data.shop.confirm,
                                             }
                                         });
                                         return
