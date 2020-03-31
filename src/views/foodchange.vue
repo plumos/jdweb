@@ -4,6 +4,7 @@
     </div>
 </template>
 
+
 <script>
     import cfoodchange from "@/components/content/cfoodchange";
     import Side from "@/components/side/side";

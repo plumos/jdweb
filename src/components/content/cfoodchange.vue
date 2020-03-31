@@ -12,7 +12,7 @@
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
                 <el-form-item label="单价(元)">
-                    <el-input-number v-model="form.unitprice"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
+                    <el-input-number v-model="form.price"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
                 </el-form-item>
                 <el-form-item label="分类">
                     <el-select v-model="form.sort" placeholder="请选择" style="width:100%" >
@@ -82,7 +82,7 @@
                     this.$notify.error({message:"菜品为空"});
                     return
                 }
-                if(typeof(this.form.unitprice)==="undefined"||this.form.unitprice===0){
+                if(typeof(this.form.price)==="undefined"||this.form.price===0){
                     this.$notify.error({message:"单价为空"});
                     return
                 }
@@ -107,7 +107,7 @@
                 param.append('account', window.sessionStorage.getItem("account"))
                 param.append('name', this.form.name);
                 param.append('sort', this.form.sort);
-                param.append('unitprice', this.form.unitprice);
+                param.append('price', this.form.price);
                 param.append("flag",this.changeflag);
                 param.append("filereal",this.form.filereal);
                 param.append("id",this.form.id);
@@ -170,12 +170,9 @@
             },
         },
         mounted:function () {
-
-
             if (this.$route.params.food) {
                 this.form = this.$route.params.food;
-
-                this.orginfos = "原信息:"+this.form.name + "  " + this.form.unitprice + "元 " + this.form.sort;
+                this.orginfos = "原信息:"+this.form.name + "  " + this.form.price + "元 " + this.form.sort;
 
                 this.fileList.push({url:this.form.imgurl});
                 if(this.form.imgurl!==null){

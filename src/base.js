@@ -1,13 +1,10 @@
 exports.install = function (Vue, options) {
-    Vue.prototype.checkstate = function (state){
-        if(state.hidden===true){
+    Vue.prototype.checkstate = function (off,soldout){
+        if(off===true){
             return "隐藏"
         }
-        if(state.soldout===true){
-            return "售罄"
-        }
-        if(state.remain!==0){
-            return "限量"+" "+state.remain
+        if(soldout===true){
+            return "下架"
         }
         return "正常"
     };
@@ -15,6 +12,7 @@ exports.install = function (Vue, options) {
     Vue.prototype.getsort=function(){
         this.axios.post('/dc/getsort', {
             account:window.sessionStorage.getItem("account"),
+            shopid:parseInt(window.sessionStorage.getItem("shopid")),
         }).then(response => {
             if (response.status === 200){
                 if (response.data.status === 0){

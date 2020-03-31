@@ -30,10 +30,6 @@
                 <i class="el-icon-coin"></i>
                 <span slot="title">统计</span>
             </el-menu-item>
-            <el-menu-item index="createuser">
-                <i class="el-icon-coin"></i>
-                <span slot="title">创建账号</span>
-            </el-menu-item>
         </el-menu>
 
     </div>

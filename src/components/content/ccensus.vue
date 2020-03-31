@@ -9,8 +9,6 @@
 
                     <v-chart ref="chart2" :options="option" :auto-resize="true" />
 
-<!--                <el-input v-model="food"></el-input>-->
-<!--                <el-button @click="getday">查询</el-button>-->
                 <div>
                     <el-radio-group v-model="radio" size="small" style="display: block" @change="rdchange" >
                         <el-radio-button label="年"></el-radio-button>

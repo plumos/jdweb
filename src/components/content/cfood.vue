@@ -109,7 +109,8 @@
                 let file = this.file;
                 let param = new FormData() ; // 创建form对象
                 param.append('file', file.raw);  // 通过append向form对象添加数据
-                param.append('account', window.sessionStorage.getItem("account"))
+                param.append('account', window.sessionStorage.getItem("account"));
+                param.append('shopid', window.sessionStorage.getItem("shopid"));
                 param.append('name', this.form.name);
                 param.append('sort', this.form.sort);
                 param.append('unitprice', this.form.unitprice);

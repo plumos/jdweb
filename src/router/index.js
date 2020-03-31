@@ -41,9 +41,6 @@ const routes = [
         path:'/foodchan',
         name:'foodchan',
         component:()=>import("../views/foodchange"),
-        meta:{
-          requireAuth:true
-        }
       },
     ],
     meta:{
@@ -51,15 +48,32 @@ const routes = [
     }
   },
   {
-    path:'/test',
-    name:'test',
-    component:()=>import("../views/test"),
+    path:'/personal',
+    name:'personal',
+    component:()=>import("../views/personal"),
+    meta:{
+      requireAuth:true
+    }
   },
-
   {
     path:'/login',
     name:'login',
     component:()=>import("../views/user/login")
+  },
+  {
+    path:'/register',
+    name:'register',
+    component:()=>import("../views/user/register")
+  },
+  {
+    path:'/shop',
+    name:'shop',
+    component:()=>import("../views/user/shop")
+  },
+  {
+    path:'/wait',
+    name:'wait',
+    component:()=>import("../views/user/wait")
   },
 ];
 

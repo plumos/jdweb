@@ -20,6 +20,19 @@
     margin-top:10%;
 }
 
+.register{
+    width:20%;
+    margin-left:40%;
+    margin-top:10%;
+}
+.shop{
+    width:40%;
+    margin-left:40%;
+    margin-top:10%;
+    display:flex;
+    flex-direction: row;
+}
+
 /*order*/
 .corder{padding-left: 100px;padding-top: 70px}
 /*census*/

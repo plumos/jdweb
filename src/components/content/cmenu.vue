@@ -14,7 +14,7 @@
             height="647"
             style="margin-left:20%;width: 75%;font-size: 18px">
             <el-table-column prop="name" label="菜品" width="250"></el-table-column>
-            <el-table-column prop="unitprice" label="单价(元)" width="150"></el-table-column>
+            <el-table-column prop="price" label="单价(元)" width="150"></el-table-column>
             <el-table-column prop="sort" label="分类" width="150"></el-table-column>
             <el-table-column label="图片"  height="60">
                 <template slot-scope="scope">
@@ -58,7 +58,7 @@
                     name: 'foodchan',
                     params: {
                         food: food
-                    }
+                    },
                 })
             },
             delfood(index,id,filereal){
@@ -98,6 +98,7 @@
             getmenu:function(){
                 this.axios.post('/dc/getmenu', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid"))
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
@@ -105,7 +106,7 @@
                                 this.menus=[];
                             }else{
                                 for(var item of response.data.data){
-                                    item.imgurl = store.state.baseurl+item.imgurl
+                                    item.imgurl = store.state.baseurl+item.imgurl;
                                     this.menus.push(item)
                                 }
                                 //this.menus = response.data.data;

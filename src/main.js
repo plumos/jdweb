@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import base from './base'
 import axios from 'axios';
+import md5 from 'js-md5';
 import store from './store/store'
 import * as types from './store/types'
 

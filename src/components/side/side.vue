@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="smenu">
-            <img class="logo" src="../../assets/333.jpg"/>
+            <img class="logo" src="../../assets/logo.jpg"/>
             <sidemenu/>
         </div>
         <div>

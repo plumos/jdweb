@@ -12,9 +12,9 @@
                 <i class="el-icon-s-custom" style="font-size: 30px;"></i>
             </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="infoset">个人设置</el-dropdown-item>
+          <el-dropdown-item @click.native="infoset">店铺信息</el-dropdown-item>
           <el-dropdown-item @click.native="pwdchange">修改密码</el-dropdown-item>
-          <el-dropdown-item @click.native="logout">退出le</el-dropdown-item>
+          <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>

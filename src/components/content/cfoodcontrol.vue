@@ -17,80 +17,74 @@
                         style="width: 100%;font-size: 18px">
                     <el-table-column prop="name" label="菜品" width="250"></el-table-column>
                     <el-table-column prop="state" label="状态">
-                        <template slot-scope="scope">{{checkstate(scope.row.state)}}</template>
-                    </el-table-column>
-                    <el-table-column  label="余量" width="150">
-                        <template slot-scope="scope">
-                            <el-input-number v-model="scope.row.number" :controls="false" class="tbinput"></el-input-number>
-                        </template>
+                        <template slot-scope="scope">{{checkstate(scope.row.off,scope.row.soldout)}}</template>
                     </el-table-column>
                     <el-table-column label="菜品管理">
                         <template slot-scope="scope">
-                            <el-button type="text" :disabled="scope.row.state.hidden||scope.row.state.soldout" @click="stateset(scope.$index,1,scope.row.id,scope.row.number)">限量</el-button>
-                            <el-button type="text" :disabled="scope.row.state.hidden||scope.row.state.soldout" @click="stateset(scope.$index,2,scope.row.id)">售罄</el-button>
-                            <el-button type="text" :disabled="scope.row.state.hidden" @click="stateset(scope.$index,3,scope.row.id)">隐藏</el-button>
-                            <el-button type="text" @click="stateset(scope.$index,4,scope.row.id)">恢复</el-button>
+                            <el-button type="text" :disabled="scope.row.off||scope.row.soldout" @click="stateset(scope.$index,1,scope.row.id)">售罄</el-button>
+                            <el-button type="text" :disabled="scope.row.off" @click="stateset(scope.$index,2,scope.row.id)">下架</el-button>
+                            <el-button type="text" @click="stateset(scope.$index,3,scope.row.id)">恢复</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
-            <el-tab-pane label="关联管理" name="second">
-<!--                <el-pagination-->
-<!--                        class="pagina" background @size-change="handleSizeChange" @current-change="current_change" :current-page.sync="currentPage"-->
-<!--                        :page-sizes="[10, 20, 30, 40]" :page-size="pagesize" layout="sizes,prev, pager, next" :total="total">-->
-<!--                </el-pagination>-->
-                <div style="display: flex">
-                    <div style="width:70%">
-                        <el-radio-group v-model="radio" size="small" style="" @change="rdchange">
-                            <el-radio-button :label="item.word" :key="item.word" v-for="item in keywords"></el-radio-button>
-                        </el-radio-group>
+            <!--<el-tab-pane label="关联管理" name="second">-->
+<!--&lt;!&ndash;                <el-pagination&ndash;&gt;-->
+<!--&lt;!&ndash;                        class="pagina" background @size-change="handleSizeChange" @current-change="current_change" :current-page.sync="currentPage"&ndash;&gt;-->
+<!--&lt;!&ndash;                        :page-sizes="[10, 20, 30, 40]" :page-size="pagesize" layout="sizes,prev, pager, next" :total="total">&ndash;&gt;-->
+<!--&lt;!&ndash;                </el-pagination>&ndash;&gt;-->
+                <!--<div style="display: flex">-->
+                    <!--<div style="width:70%">-->
+                        <!--<el-radio-group v-model="radio" size="small" style="" @change="rdchange">-->
+                            <!--<el-radio-button :label="item.word" :key="item.word" v-for="item in keywords"></el-radio-button>-->
+                        <!--</el-radio-group>-->
 
-                    <el-table
-                        :data="searchmenus"
-                        :cell-style="{padding:0.5}"
-                        border
-                        :header-cell-class-name="tableHeader"
-                        ref="mutipleTable"
-                        height="550"
-                        style="width: 100%;font-size: 18px;margin-top:10px">
-                        <el-table-column type="selection" width="55"></el-table-column>
-                        <el-table-column prop="name" label="菜品" ></el-table-column>
-                        <el-table-column prop="state" label="状态" >
-                            <template slot-scope="scope">{{checkstate(scope.row.state)}}</template>
-                        </el-table-column>
-                    </el-table>
-                    </div>
-                    <div style="margin-top: 30px;padding-left: 10px">
-                        <el-row style="margin-top: 15px" >
-                            <el-input size="small" style="width: 50%" v-model="sword"></el-input>
-                            <el-button size="small" style="margin-left: 10px;" @click="search" type="text">搜索</el-button>
-                        </el-row>
+                    <!--<el-table-->
+                        <!--:data="searchmenus"-->
+                        <!--:cell-style="{padding:0.5}"-->
+                        <!--border-->
+                        <!--:header-cell-class-name="tableHeader"-->
+                        <!--ref="mutipleTable"-->
+                        <!--height="550"-->
+                        <!--style="width: 100%;font-size: 18px;margin-top:10px">-->
+                        <!--<el-table-column type="selection" width="55"></el-table-column>-->
+                        <!--<el-table-column prop="name" label="菜品" ></el-table-column>-->
+                        <!--<el-table-column prop="state" label="状态" >-->
+                            <!--<template slot-scope="scope">{{checkstate(scope.row.off,scope.row.soldout)}}</template>-->
+                        <!--</el-table-column>-->
+                    <!--</el-table>-->
+                    <!--</div>-->
+                    <!--<div style="margin-top: 30px;padding-left: 10px">-->
+                        <!--<el-row style="margin-top: 15px" >-->
+                            <!--<el-input size="small" style="width: 50%" v-model="sword"></el-input>-->
+                            <!--<el-button size="small" style="margin-left: 10px;" @click="search" type="text">搜索</el-button>-->
+                        <!--</el-row>-->
 
-                            <el-button @click="mutilstateset(2)" style="margin-left: 10px;margin-top:30px">售罄</el-button>
-                            <el-button @click="mutilstateset(3)" >隐藏</el-button>
-                            <el-button @click="mutilstateset(4)" >恢复</el-button>
-<!--                        </el-card>-->
-                    </div>
-                </div>
-            </el-tab-pane>
-            <el-tab-pane label="关键词设置" name="third">
-                <el-row style="margin-top: 10px;width:50%" >
-                    <el-input size="small" style="width: 50%" v-model="newword"></el-input>
-                    <el-button size="small" style="margin-left: 10px;margin-bottom: 10px" @click="addkword" type="text">添加</el-button>
-                </el-row>
-                <el-table
-                    :data="keywords"
-                    :cell-style="{padding:0}"
-                    border
-                    style="width: 70%">
-                    <el-table-column label="关键词" prop="word"></el-table-column>
-                    <el-table-column label="操作">
-                        <template slot-scope="scope">
-                            <el-button type="text" @click="delkword(scope.$index,scope.row.id)">删除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-tab-pane>
+                            <!--<el-button @click="mutilstateset(2)" style="margin-left: 10px;margin-top:30px">售罄</el-button>-->
+                            <!--<el-button @click="mutilstateset(3)" >隐藏</el-button>-->
+                            <!--<el-button @click="mutilstateset(4)" >恢复</el-button>-->
+<!--&lt;!&ndash;                        </el-card>&ndash;&gt;-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</el-tab-pane>-->
+            <!--<el-tab-pane label="关键词设置" name="third">-->
+                <!--<el-row style="margin-top: 10px;width:50%" >-->
+                    <!--<el-input size="small" style="width: 50%" v-model="newword"></el-input>-->
+                    <!--<el-button size="small" style="margin-left: 10px;margin-bottom: 10px" @click="addkword" type="text">添加</el-button>-->
+                <!--</el-row>-->
+                <!--<el-table-->
+                    <!--:data="keywords"-->
+                    <!--:cell-style="{padding:0}"-->
+                    <!--border-->
+                    <!--style="width: 70%">-->
+                    <!--<el-table-column label="关键词" prop="word"></el-table-column>-->
+                    <!--<el-table-column label="操作">-->
+                        <!--<template slot-scope="scope">-->
+                            <!--<el-button type="text" @click="delkword(scope.$index,scope.row.id)">删除</el-button>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                <!--</el-table>-->
+            <!--</el-tab-pane>-->
             <el-tab-pane label="分类设置" name="forth">
                 <el-row style="margin-top: 10px;width:50%" >
                     <el-input size="small" style="width: 50%" v-model="sort"></el-input>
@@ -190,6 +184,7 @@
             delkword(index,id){
                 this.axios.post('/dc/delkword', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                     id:id,
                 }).then(response => {
                     if (response.status === 200){
@@ -207,6 +202,7 @@
             delsort(index,id){
                 this.axios.post('/dc/delsort', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                     id:id,
                 }).then(response => {
                     if (response.status === 200){
@@ -235,6 +231,7 @@
                 }
                 this.axios.post('/dc/addkword', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                     word:this.newword,
                 }).then(response => {
                     if (response.status === 200){
@@ -264,6 +261,7 @@
                 }
                 this.axios.post('/dc/addsort', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                     sort:this.sort,
                 }).then(response => {
                     if (response.status === 200){
@@ -282,6 +280,7 @@
             getmenu:function(){
                 this.axios.post('/dc/getmenu', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid"))
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
@@ -303,6 +302,7 @@
             getkeyword:function(){
                 this.axios.post('/dc/getkword', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
@@ -323,6 +323,7 @@
             fdgetsort:function(){
                 this.axios.post('/dc/getsort', {
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                 }).then(response => {
                     if (response.status === 200){
                         if (response.data.status === 0){
@@ -340,16 +341,12 @@
                 });
             },
 
-            stateset:function(index,tag,id,no) {
-                if(tag===1&& typeof(no) === "undefined"){
-                    this.$notify.error({message:"余量为空"})
-                    return
-                }
-                this.axios.post('/dc/setstate',{
+            stateset:function(index,tag,id) {
+                this.axios.post('/dc/setfoodstate',{
                     account:window.sessionStorage.getItem("account"),
+                    shopid:parseInt(window.sessionStorage.getItem("shopid")),
                     tag:tag,
                     id:id,
-                    no:no,
                 }).then(response=>{
                     if (response.status === 200){
                         if (response.data.status === 0){
@@ -357,22 +354,15 @@
                             var menus=this.menus;
                             switch (tag) {
                                 case 1:
-                                    menus[index].state.remain=no;
-                                    delete(menus[index].number);
+                                    menus[index].soldout=true;
                                     break;
                                 case 2:
-                                    menus[index].state.remain=0;
-                                    menus[index].state.soldout=true;
+                                    menus[index].off=true;
                                     break;
                                 case 3:
-                                    menus[index].state.remain=0;
-                                    menus[index].state.hidden=true;
+                                    menus[index].off=false;
+                                    menus[index].soldout=false;
                                     break;
-                                case 4:
-                                    menus[index].state.remain=0;
-                                    menus[index].state.hidden=false;
-                                    menus[index].state.soldout=false;
-                                    break
                             }
                             this.menus=menus;
                         }else{
@@ -403,21 +393,14 @@
                             for(var index of indexs){
                                 switch (tag) {
                                     case 1:
-                                        menus[index].state.remain=no;
-                                        delete(menus[index].number);
+                                        menus[index].soldout=true;
                                         break;
                                     case 2:
-                                        menus[index].state.remain=0;
-                                        menus[index].state.soldout=true;
+                                        menus[index].off=true;
                                         break;
                                     case 3:
-                                        menus[index].state.remain=0;
-                                        menus[index].state.hidden=true;
-                                        break;
-                                    case 4:
-                                        menus[index].state.remain=0;
-                                        menus[index].state.hidden=false;
-                                        menus[index].state.soldout=false;
+                                        menus[index].off=false;
+                                        menus[index].soldout=false;
                                         break
                                 }
                             }
@@ -433,8 +416,9 @@
             this.getkeyword();
 
             this.sorts = JSON.parse(window.sessionStorage.getItem("sorts"));
-
-
+            if(this.sorts===null){
+                this.sorts = [];
+            }
             this.handleSizeChange(10);
         }
     }
