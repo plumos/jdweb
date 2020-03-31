@@ -14,7 +14,7 @@
                         <el-input v-model="form.name" ></el-input>
                     </el-form-item>
                     <el-form-item label="单价(元)"  >
-                        <el-input-number v-model="form.unitprice"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
+                        <el-input-number v-model="form.price"  :controls="false"  style="width:100%;horiz-align:left"></el-input-number>
                     </el-form-item>
                     <el-form-item label="分类">
                         <el-select v-model="form.sort" placeholder="请选择" style="width:100%" >
@@ -58,7 +58,7 @@
                 :cell-class-name="tablecell"
                 style="margin-left:5%;width:85%;font-size: 18px;margin-top: 0px">
             <el-table-column prop="name" label="菜品" width="250"></el-table-column>
-            <el-table-column prop="unitprice" label="单价(元)" width="150"></el-table-column>
+            <el-table-column prop="price" label="单价(元)" width="150"></el-table-column>
             <el-table-column prop="sort" label="分类" width="150"></el-table-column>
             <el-table-column label="图片"  height="60">
                 <template slot-scope="scope">
@@ -94,7 +94,7 @@
                     this.$notify.error({message:"菜品为空"});
                     return
                 }
-                if(typeof(this.form.unitprice)==="undefined"||this.form.unitprice===0){
+                if(typeof(this.form.price)==="undefined"||this.form.price===0){
                     this.$notify.error({message:"单价为空"});
                     return
                 }
@@ -113,7 +113,7 @@
                 param.append('shopid', window.sessionStorage.getItem("shopid"));
                 param.append('name', this.form.name);
                 param.append('sort', this.form.sort);
-                param.append('unitprice', this.form.unitprice);
+                param.append('price', this.form.price);
                 let config = {
                     headers: {'Content-Type': 'multipart/form-data'}
                 };
@@ -126,7 +126,7 @@
                             if (response.data.status === 0){
                                 this.$notify({message: '添加成功', type: 'success'});
 
-                                this.menus.push({name:this.form.name,sort:this.form.sort,unitprice:this.form.unitprice,imgurl:response.data.imgurl});
+                                this.menus.push({name:this.form.name,sort:this.form.sort,price:this.form.price,imgurl:response.data.imgurl});
                                 this.form={};
                                 this.fileList=[];
                                 setTimeout(()=>{this.hideUpload=false;}, 500);
